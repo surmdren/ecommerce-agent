@@ -16,6 +16,22 @@
 - [ ] 内测（3 个卖家）
 - [ ] 上线
 
+## V2：Listing AI 生成（Month 2）
+
+- [ ] 竞品关键词抓取分析
+- [ ] Title / Bullet Points / Description AI 生成
+- [ ] Rufus 算法适配优化
+- [ ] A+ 页面内容生成
+- [ ] 批量 Listing 导出（CSV）
+
+## V3：亚马逊广告优化（Month 3）
+
+- [ ] SP-API 广告数据接入（Campaign / Ad Group / Keyword）
+- [ ] ACOS 诊断 + 优化建议
+- [ ] 自动出价调整策略
+- [ ] 新品广告冷启动方案生成
+- [ ] 广告周报自动生成
+
 ## 冷启动
 
 - [ ] 小红书私信 10 个亚马逊运营博主
