@@ -1,12 +1,12 @@
 # MVP 方案：亚马逊英文客服自动回复
 
-> Version: 1.0 | 日期: 2026-02-28
+> Version: 1.1 | 日期: 2026-02-28
 
 ---
 
 ## 🎯 产品定位
 
-**一句话**：中国亚马逊卖家的 AI 英文客服，24小时自动处理买家邮件，不再因英文差/时差丢单。
+**一句话**：中国亚马逊卖家的 AI 英文客服，24小时自动处理买家消息，不再因英文差/时差丢单。
 
 **目标用户**：有 1-5 个亚马逊店铺的中国中小卖家  
 **定价**：$49/月（500条邮件）/ $99/月（无限制）  
@@ -26,13 +26,13 @@
 ## ✅ MVP 功能（只做这些）
 
 ### 核心功能
-1. **邮件自动读取**：连接亚马逊 Seller Central 邮件（通过 SP-API）
-2. **意图识别**：自动判断买家邮件类型（咨询/投诉/退款/好评请求等）
+1. **消息自动读取**：通过 SP-API Messaging API 拉取 Buyer-Seller 站内消息
+2. **意图识别**：自动判断买家消息类型（咨询/投诉/退款/好评请求等）
 3. **AI 回复生成**：根据意图生成专业英文回复
 4. **人工确认**：回复前展示给卖家确认（MVP 阶段不全自动）
 5. **一键发送**：确认后自动发出
 
-### 6 大场景（覆盖 80% 邮件）
+### 6 大场景（覆盖 80% 买家消息）
 | 场景 | 示例 |
 |------|------|
 | 产品咨询 | "Does this fit model X?" |
@@ -54,7 +54,7 @@
 
 ### 架构
 ```
-亚马逊 SP-API → 拉取邮件
+亚马逊 SP-API Messaging API → 拉取站内消息（Buyer-Seller Messaging）
       ↓
 意图分类（Claude claude-haiku，便宜快）
       ↓
@@ -69,14 +69,17 @@ Web UI 展示 → 卖家确认 → SP-API 发送
 | 前端 | Next.js + Tailwind |
 | 后端 | Node.js / Fastify |
 | AI | Claude API（Haiku 分类 + Sonnet 生成）|
-| 邮件 | Amazon SP-API (Messaging API) |
+| 消息 | Amazon SP-API (Messaging API + Notifications API) |
 | 数据库 | PostgreSQL（复用 infra）|
 | 部署 | Vercel（前端）+ Railway（后端）|
 
 ### Amazon SP-API 接入
 - 使用 `amazon-sp-api` npm 包
-- 需要卖家授权（OAuth 流程）
-- Messaging API：读取 + 回复买家消息
+- 开发者注册：走 **Solution Provider Portal**（无需 Professional 卖家账号）
+- 用户授权：OAuth 2.0 流程，卖家在 Seller Central 授权我们的应用
+- 用户要求：卖家需有 **Professional 账号**（我们的目标用户均满足）
+- Messaging API：读取 + 回复 Buyer-Seller 站内消息
+- Notifications API：实时 webhook 推送新消息（比轮询更高效）
 
 ---
 
@@ -86,9 +89,9 @@ Web UI 展示 → 卖家确认 → SP-API 发送
 | 天 | 任务 |
 |----|------|
 | Day 1-2 | Amazon SP-API 接入 + OAuth 授权流程 |
-| Day 3-4 | 邮件读取 + 意图分类（6大场景）|
+| Day 3-4 | 消息读取（SP-API Messaging）+ 意图分类（6大场景）|
 | Day 5-6 | AI 回复生成 + Prompt 调优 |
-| Day 7 | Web UI（邮件列表 + 确认界面）|
+| Day 7 | Web UI（消息列表 + 确认界面）|
 
 ### Week 2：完善 + 上线
 | 天 | 任务 |
@@ -105,7 +108,7 @@ Web UI 展示 → 卖家确认 → SP-API 发送
 
 | 项目 | 月成本 |
 |------|--------|
-| Claude API（1万封邮件）| ~$15 |
+| Claude API（1万条消息）| ~$15 |
 | 服务器（Railway）| $10 |
 | 域名 + SSL | $2 |
 | **合计** | **~$27/月** |
