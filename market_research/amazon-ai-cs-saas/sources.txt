@@ -1,0 +1,37 @@
+数据来源汇总
+============
+
+1. Marketplace Pulse - 中国卖家占比超50%（2024年11月）
+   https://www.sypost.com/news/3/960
+
+2. 亚马逊《2024中国出口跨境电商白皮书》
+   https://gs.amazon.cn/news/news-brand-240816
+
+3. 2024年底亚马逊卖家总数将超970万，活跃卖家达190万
+   https://www.amz123.com/t/MscIbvsS
+
+4. 2024年中国卖家在亚马逊平台上占比已超50%
+   https://www.sypost.com/news/3/960
+
+5. 跨境电商ERP市场研究报告（2024年）
+   https://img.frostchina.com/attachment/17623584/oKvxHKZBRnAkQHFY88vhGd.pdf
+
+6. eDesk Pricing 2025 - G2
+   https://www.g2.com/products/edesk/pricing
+
+7. Amazon SP-API Messaging API 限制讨论（GitHub 2024.01）
+   https://github.com/amzn/selling-partner-api-models/discussions/3487
+   https://github.com/amzn/selling-partner-api-models/issues/2761
+
+8. Shulex AI 客服 - AWS 助力报道
+   https://finance.sina.com.cn/roll/2024-07-25/doc-incfhxxp8809854.shtml
+
+9. Helium10 中国定价讨论 - 知乎
+   https://www.zhihu.com/question/505487843
+
+10. 亚马逊卖家工具对比 2025
+    https://www.bebolddigital.com/blog/best-ai-tools-for-amazon-sellers
+    https://www.repricer.com/blog/best-ai-tools-for-amazon-sellers/
+
+11. 艾瑞咨询：2024年跨境电商SaaS市场
+    https://www.stcn.com/article/detail/1654697.html
