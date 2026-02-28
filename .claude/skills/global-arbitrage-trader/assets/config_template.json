@@ -1,0 +1,37 @@
+{
+  "trading_capital": 100000,
+  "risk_per_trade_percent": 2.0,
+  "max_position_percent": 20.0,
+  "data_sources": {
+    "yahoo_finance": {
+      "enabled": true,
+      "description": "Free real-time quotes"
+    },
+    "bloomberg": {
+      "enabled": false,
+      "api_key": "YOUR_BLOOMBERG_API_KEY",
+      "description": "Professional market data (paid)"
+    }
+  },
+  "monitored_arbitrage_pairs": [
+    {
+      "name": "Alibaba",
+      "symbols": ["BABA", "9988.HK"],
+      "min_spread_percent": 2.0,
+      "notes": "US vs HK market"
+    },
+    {
+      "name": "Baidu",
+      "symbols": ["BIDU", "9888.HK"],
+      "min_spread_percent": 2.0,
+      "notes": "US vs HK market"
+    }
+  ],
+  "broker_api": {
+    "enabled": false,
+    "provider": "futu",
+    "api_key": "YOUR_API_KEY",
+    "secret_key": "YOUR_SECRET_KEY",
+    "auto_trade_confirm_required": true
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "workflow_name": "Industrial Product Basic Enhancement",
+  "description": "基础产品渲染优化工作流 - 保持结构，提升质量",
+  "recommended_for": "光学仪器、精密仪器、工业设备",
+
+  "nodes": {
+    "input": {
+      "type": "LoadImage",
+      "note": "加载原始 KeyShot 渲染图"
+    },
+
+    "checkpoint": {
+      "type": "CheckpointLoaderSimple",
+      "model": "Realistic Vision V6.0",
+      "note": "推荐模型：Realistic Vision V6.0 或 epiCRealism"
+    },
+
+    "vae": {
+      "type": "VAELoader",
+      "vae": "vae-ft-mse-840000-ema-pruned",
+      "note": "使用高质量 VAE"
+    },
+
+    "controlnet_canny": {
+      "type": "ControlNetApply",
+      "controlnet": "control_v11p_sd15_canny",
+      "strength": 0.9,
+      "preprocessor": "canny",
+      "note": "保持产品轮廓和结构 - 最重要"
+    },
+
+    "controlnet_depth": {
+      "type": "ControlNetApply",
+      "controlnet": "control_v11f1p_sd15_depth",
+      "strength": 0.6,
+      "preprocessor": "depth_midas",
+      "note": "保持空间关系和立体感"
+    },
+
+    "positive_prompt": {
+      "type": "CLIPTextEncode",
+      "text": "professional product photography, industrial design, precision optical instrument, studio lighting, white background, high detail, octane render, photorealistic, commercial photography, clean composition, soft shadows, professional color grading, 8k uhd, laboratory equipment, glass optics, metal body, scientific grade, accurate materials"
+    },
+
+    "negative_prompt": {
+      "type": "CLIPTextEncode",
+      "text": "blur, noise, grain, low quality, amateur, cluttered background, harsh shadows, overexposed, underexposed, cartoon, sketch, unrealistic materials, plastic toy, cheap rendering, toy-like, simplified, low detail, fake materials, exaggerated colors, artistic rendering"
+    },
+
+    "sampler": {
+      "type": "KSampler",
+      "seed": "random",
+      "steps": 35,
+      "cfg": 7,
+      "sampler_name": "dpmpp_2m_karras",
+      "scheduler": "karras",
+      "denoise": 0.40,
+      "note": "关键参数：denoise 0.35-0.45 保持结构"
+    },
+
+    "vae_decode": {
+      "type": "VAEDecode",
+      "note": "解码为最终图像"
+    },
+
+    "save": {
+      "type": "SaveImage",
+      "filename_prefix": "industrial_product_enhanced",
+      "note": "保存优化后的产品图"
+    }
+  },
+
+  "parameters": {
+    "denoising_strength": {
+      "value": 0.40,
+      "range": "0.35-0.45",
+      "note": "保持产品结构，只优化渲染质量"
+    },
+    "canny_strength": {
+      "value": 0.9,
+      "range": "0.8-1.0",
+      "note": "确保产品轮廓不变形"
+    },
+    "depth_strength": {
+      "value": 0.6,
+      "range": "0.5-0.7",
+      "note": "保持空间深度"
+    },
+    "cfg_scale": {
+      "value": 7,
+      "range": "6-8",
+      "note": "平衡 prompt 遵循度"
+    },
+    "steps": {
+      "value": 35,
+      "range": "30-40",
+      "note": "足够的采样步数保证质量"
+    }
+  },
+
+  "usage_instructions": [
+    "1. 将 KeyShot 渲染的产品图拖入 LoadImage 节点",
+    "2. 确认使用推荐的 Checkpoint 模型（Realistic Vision V6.0）",
+    "3. ControlNet Canny 权重设为 0.9（保持结构）",
+    "4. Denoising 设为 0.40（平衡优化和保真）",
+    "5. 根据产品类型调整 positive prompt 中的描述",
+    "6. 点击 Queue Prompt 开始渲染",
+    "7. 如果结构变形，提高 Canny 权重或降低 Denoising",
+    "8. 如果优化不明显，适当提高 Denoising（不超过 0.5）"
+  ],
+
+  "troubleshooting": {
+    "结构变形": "提高 canny_strength 到 0.95，降低 denoise 到 0.35",
+    "优化不明显": "提高 denoise 到 0.45，检查 prompt 是否准确",
+    "材质不真实": "切换到 epiCRealism 模型，添加材质 LoRA",
+    "光线不自然": "调整 prompt，添加 'soft studio lighting'，降低 CFG 到 6.5"
+  }
+}

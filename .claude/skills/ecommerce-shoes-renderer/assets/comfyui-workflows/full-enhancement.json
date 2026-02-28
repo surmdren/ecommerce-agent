@@ -1,0 +1,295 @@
+{
+  "workflow_name": "E-commerce Shoes - Full Enhancement",
+  "description": "完整的电商鞋子图优化工作流，包含背景移除、材质增强、光线优化、细节锐化",
+  "model_config": {
+    "base": "Product Photography XL",
+    "vae": "sdxl_vae",
+    "loras": [
+      {
+        "name": "Product Photo Realism",
+        "weight": 0.7
+      },
+      {
+        "name": "Fabric Texture",
+        "weight": 0.6,
+        "note": "适用于运动鞋、帆布鞋"
+      },
+      {
+        "name": "Leather Material",
+        "weight": 0.7,
+        "note": "适用于皮鞋、靴子"
+      },
+      {
+        "name": "Clean Background",
+        "weight": 0.8
+      }
+    ]
+  },
+  "parameters": {
+    "denoise": 0.40,
+    "canny_strength": 0.95,
+    "depth_strength": 0.65,
+    "cfg_scale": 7.0,
+    "steps": 35,
+    "sampler": "dpmpp_2m_karras",
+    "scheduler": "karras",
+    "resolution": "1200x1200"
+  },
+  "prompts": {
+    "positive_template": "professional product photography, {shoe_type}, {material_description}, side 45-degree angle view, single shoe display, pure white background RGB(255,255,255), soft contact shadow, studio lighting, bright and clean, commercial product photo, high resolution, sharp details, photorealistic, shoe占比 70-85%, centered composition, for {platform} listing, e-commerce standard, 8k uhd, product showcase",
+    "negative": "blur, noise, grain, low quality, amateur, dirty, worn out, used shoes, cluttered background, colored background, gradient background, people, feet, model wearing, legs, harsh shadows, dark lighting, underexposed, cartoon, sketch, 3d render, unrealistic, deformed shape, distorted sole, asymmetric, text, watermark, brand logo (unless product original), multiple shoes, shoe box, accessories, patterns in background",
+    "examples": {
+      "sneakers": {
+        "positive": "professional product photography, athletic sneakers, sports shoes, mesh fabric upper, synthetic materials, rubber sole with texture, side 45-degree angle view, single shoe display, pure white background RGB(255,255,255), soft contact shadow, studio lighting, bright and clean, commercial product photo, high resolution, sharp details, photorealistic, shoe占比 75%, centered composition, for Taobao/Amazon listing, e-commerce standard, 8k uhd",
+        "material_lora": "Fabric Texture (0.6)"
+      },
+      "leather_shoes": {
+        "positive": "professional product photography, leather dress shoes, formal shoes, genuine leather upper, polished finish, natural leather texture, glossy surface with subtle reflections, side 45-degree angle view, single shoe display, pure white background RGB(255,255,255), soft contact shadow, studio lighting, commercial photography, high detail, sharp focus, photorealistic, shoe占比 75%, elegant composition, for premium e-commerce listing, 8k uhd",
+        "material_lora": "Leather Material (0.7)"
+      },
+      "high_heels": {
+        "positive": "professional product photography, high heels, women's dress shoes, glossy patent leather, stiletto heel, elegant design, side profile view, pure white background RGB(255,255,255), minimal shadow, studio lighting, soft highlights, commercial fashion photography, high resolution, sharp focus, photorealistic, shoe占比 70%, vertical composition, for fashion e-commerce, 8k uhd",
+        "material_lora": "Glossy Surface (0.5) + Fashion Product (0.7)"
+      }
+    }
+  },
+  "preprocessing": {
+    "background_removal": {
+      "method": "BiRefNet",
+      "fallback": "Rembg",
+      "edge_feathering": 2
+    },
+    "color_correction": {
+      "white_balance": "auto",
+      "exposure_adjustment": true
+    },
+    "image_resize": {
+      "target_resolution": "1200x1200",
+      "maintain_aspect_ratio": true,
+      "padding_color": "RGB(255,255,255)"
+    }
+  },
+  "controlnets": [
+    {
+      "type": "canny",
+      "model": "control_v11p_sd15_canny",
+      "strength": 0.95,
+      "preprocessor": "canny",
+      "low_threshold": 100,
+      "high_threshold": 200,
+      "note": "保持鞋子轮廓结构"
+    },
+    {
+      "type": "depth",
+      "model": "control_v11f1p_sd15_depth",
+      "strength": 0.65,
+      "preprocessor": "depth_midas",
+      "note": "保持立体感"
+    },
+    {
+      "type": "seg",
+      "model": "control_v11p_sd15_seg",
+      "strength": 0.70,
+      "preprocessor": "oneformer_ade20k",
+      "note": "可选，用于精确分离鞋子与背景",
+      "enabled": false
+    }
+  ],
+  "postprocessing": {
+    "background_cleanup": {
+      "enabled": true,
+      "pure_white_threshold": 250,
+      "edge_refinement": true
+    },
+    "detail_enhancement": {
+      "sharpen": {
+        "enabled": true,
+        "strength": 0.3
+      },
+      "clarity": {
+        "enabled": true,
+        "strength": 0.2
+      },
+      "texture": {
+        "enabled": true,
+        "strength": 0.15
+      }
+    },
+    "color_adjustment": {
+      "saturation": 1.05,
+      "vibrance": 1.10,
+      "contrast": 1.02
+    },
+    "final_resize": {
+      "platforms": {
+        "taobao": "1200x1200",
+        "jd": "1000x1000",
+        "amazon": "2000x2000"
+      }
+    }
+  },
+  "quality_checklist": {
+    "background": [
+      "纯白底 RGB(255,255,255)",
+      "无背景残留或杂色",
+      "鞋子边缘清晰无毛边"
+    ],
+    "product": [
+      "鞋子占比 70-85%",
+      "产品居中放置",
+      "视角为侧面 45° 或正侧面",
+      "产品完整无截断"
+    ],
+    "material": [
+      "材质纹理清晰（皮革纹理、网布透气孔、帆布编织）",
+      "光泽自然（皮鞋柔和反光、运动鞋哑光）",
+      "色彩准确，饱和度适中"
+    ],
+    "lighting": [
+      "明亮均匀，无暗角",
+      "阴影柔和，接触阴影自然",
+      "无过曝高光",
+      "无明显色差"
+    ],
+    "details": [
+      "鞋带、鞋眼、拉链等细节清晰",
+      "鞋底纹路可见",
+      "缝线清晰",
+      "Logo、品牌标识清晰（如有）"
+    ],
+    "file": [
+      "分辨率符合平台要求",
+      "文件大小符合限制",
+      "格式为 JPG 或 PNG",
+      "色彩模式为 RGB"
+    ]
+  },
+  "usage_instructions": {
+    "basic_workflow": [
+      "1. 将鞋子图片拖入 LoadImage 节点",
+      "2. BiRefNet 节点自动移除背景",
+      "3. 根据鞋子类型选择合适的 LoRA（运动鞋用 Fabric Texture，皮鞋用 Leather Material）",
+      "4. 编辑 Positive Prompt，填入鞋子类型和材质描述",
+      "5. 确认 ControlNet Canny 权重为 0.95（保持结构）",
+      "6. 确认 Denoise 为 0.40（标准优化强度）",
+      "7. Queue Prompt 开始生成",
+      "8. 检查输出图片质量",
+      "9. 如有问题，参考 troubleshooting 调整参数"
+    ],
+    "advanced_tips": [
+      "白色鞋子：增加淡灰色阴影，避免与白底融合",
+      "多材质鞋子：在 Prompt 中详细描述每种材质",
+      "高跟鞋：提高 Canny 权重到 0.98，避免鞋跟变形",
+      "批量处理：使用 Image Batch 节点，统一参数配置",
+      "平台适配：根据目标平台调整最终输出分辨率"
+    ]
+  },
+  "troubleshooting": {
+    "结构变形（鞋子变形）": {
+      "原因": "Denoise 过高或 Canny 权重过低",
+      "解决方案": [
+        "提高 Canny 权重到 0.98",
+        "降低 Denoise 到 0.35",
+        "确认原图边缘清晰"
+      ]
+    },
+    "背景不够纯白": {
+      "原因": "背景移除不彻底或后处理未启用",
+      "解决方案": [
+        "调整 Prompt: (pure white background:1.3)",
+        "启用后处理 Background Cleanup",
+        "手动使用 Levels 工具调整白场到 255"
+      ]
+    },
+    "材质不真实（塑料感）": {
+      "原因": "LoRA 权重过高或 Prompt 描述不准确",
+      "解决方案": [
+        "降低材质 LoRA 权重（如 Leather Material 从 0.7 降到 0.5）",
+        "在 Prompt 中增加材质细节描述（如 natural leather grain, soft matte finish）",
+        "在 Negative Prompt 中增加 plastic, shiny vinyl, artificial"
+      ]
+    },
+    "细节模糊": {
+      "原因": "Denoise 过高或后处理锐化不足",
+      "解决方案": [
+        "降低 Denoise 到 0.35",
+        "增加 Steps 到 40",
+        "增加后处理 Sharpen 强度到 0.4"
+      ]
+    },
+    "光线不自然": {
+      "原因": "CFG Scale 过高或 Prompt 光线描述不当",
+      "解决方案": [
+        "降低 CFG Scale 到 6.5",
+        "调整 Prompt: studio lighting, soft and even",
+        "避免 Prompt 中出现 dramatic lighting, strong shadows"
+      ]
+    },
+    "色彩过饱和": {
+      "原因": "后处理 Saturation 过高",
+      "解决方案": [
+        "降低后处理 Saturation 到 1.0",
+        "降低 Vibrance 到 1.05",
+        "在 Prompt 中增加 natural color, accurate color"
+      ]
+    },
+    "鞋底纹路不清晰": {
+      "原因": "Depth ControlNet 权重过低",
+      "解决方案": [
+        "提高 Depth 权重到 0.70",
+        "在 Prompt 中增加 textured sole, grip pattern visible",
+        "增加后处理 Texture 强度"
+      ]
+    }
+  },
+  "platform_optimization": {
+    "taobao_tmall": {
+      "resolution": "1200x1200",
+      "file_size_limit": "500KB",
+      "background": "纯白 RGB(255,255,255)",
+      "product_ratio": "70-85%",
+      "shadow": "可选，柔和接触阴影",
+      "additional_prompt": "Taobao product listing, Chinese e-commerce standard"
+    },
+    "jd": {
+      "resolution": "1000x1000",
+      "file_size_limit": "1MB",
+      "background": "纯白 RGB(255,255,255)",
+      "product_ratio": "60-80%",
+      "shadow": "可选，柔和",
+      "additional_prompt": "JD.com product listing, professional presentation"
+    },
+    "amazon": {
+      "resolution": "2000x2000",
+      "file_size_limit": "无严格限制，建议 <1MB",
+      "background": "纯白 RGB(255,255,255) 或 RGB(246,246,246)",
+      "product_ratio": "85%+",
+      "shadow": "不推荐",
+      "additional_prompt": "Amazon product listing, international e-commerce standard, maximum detail, enable zoom function"
+    }
+  },
+  "batch_processing": {
+    "enabled": true,
+    "settings": {
+      "use_image_batch_node": true,
+      "consistent_parameters": true,
+      "auto_naming": "shoe_{index}_{timestamp}.jpg"
+    },
+    "workflow": [
+      "1. 准备所有鞋子图片到同一文件夹",
+      "2. 在 ComfyUI 中加载 Image Batch 节点",
+      "3. 设置批量输入文件夹路径",
+      "4. 确认所有参数统一（Denoise, ControlNet 权重等）",
+      "5. Queue Prompt 开始批量处理",
+      "6. 输出文件自动保存到指定文件夹",
+      "7. 批量检查输出质量"
+    ]
+  },
+  "notes": [
+    "适用场景：电商平台主图优化，支持淘宝、京东、亚马逊等",
+    "输出标准：纯白底 RGB(255,255,255)，高清晰度，符合平台规范",
+    "优化重点：保持产品结构、增强材质真实感、优化光线、锐化细节",
+    "建议流程：先用 background-removal.json 移除背景，再用 full-enhancement.json 全面优化",
+    "批量处理：使用 Image Batch 节点，提高效率"
+  ]
+}

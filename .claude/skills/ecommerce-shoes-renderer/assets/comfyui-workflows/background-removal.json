@@ -1,0 +1,83 @@
+{
+  "workflow_name": "E-commerce Shoes - Background Removal",
+  "description": "专门用于电商鞋子图的背景移除工作流，输出纯白底产品图",
+  "model_config": {
+    "base": "Product Photography XL",
+    "vae": "sdxl_vae",
+    "loras": [
+      {
+        "name": "Clean Background",
+        "weight": 0.8
+      }
+    ]
+  },
+  "parameters": {
+    "denoise": 0.40,
+    "canny_strength": 0.95,
+    "depth_strength": 0.65,
+    "cfg_scale": 7.0,
+    "steps": 30,
+    "sampler": "dpmpp_2m_karras",
+    "scheduler": "karras",
+    "resolution": "1200x1200"
+  },
+  "prompts": {
+    "positive": "professional product photography, single shoe, pure white background RGB(255,255,255), no shadows, clean composition, studio lighting, high detail, sharp focus, photorealistic, 8k uhd, product showcase, e-commerce standard",
+    "negative": "blur, noise, grain, low quality, cluttered background, colored background, gradient, shadows, people, model, feet, text, watermark, logo, multiple shoes, shoe box, accessories, patterns, textures in background"
+  },
+  "preprocessing": {
+    "background_removal_method": "BiRefNet",
+    "edge_feathering": 2,
+    "background_color": "RGB(255,255,255)"
+  },
+  "controlnets": [
+    {
+      "type": "canny",
+      "model": "control_v11p_sd15_canny",
+      "strength": 0.95,
+      "preprocessor": "canny",
+      "low_threshold": 100,
+      "high_threshold": 200
+    },
+    {
+      "type": "depth",
+      "model": "control_v11f1p_sd15_depth",
+      "strength": 0.65,
+      "preprocessor": "depth_midas"
+    }
+  ],
+  "postprocessing": {
+    "background_cleanup": true,
+    "edge_refinement": true,
+    "white_balance": "auto"
+  },
+  "notes": [
+    "适用场景：原图背景复杂，需要完全移除背景",
+    "输出：纯白底 RGB(255,255,255)，无阴影",
+    "适用平台：淘宝、京东、亚马逊",
+    "优化重点：鞋子边缘清晰，无毛边，无背景残留"
+  ],
+  "usage_instructions": {
+    "step_1": "将原始鞋子图片拖入 LoadImage 节点",
+    "step_2": "BiRefNet 节点自动移除背景",
+    "step_3": "ControlNet Canny 节点保持鞋子轮廓（权重 0.95）",
+    "step_4": "ControlNet Depth 节点保持立体感（权重 0.65）",
+    "step_5": "KSampler 节点执行 img2img（Denoise 0.40）",
+    "step_6": "输出节点自动替换纯白底 RGB(255,255,255)",
+    "step_7": "检查输出图片：鞋子边缘、背景纯白度、细节清晰度"
+  },
+  "troubleshooting": {
+    "鞋子边缘有毛边": {
+      "solution": "提高 Canny 权重到 0.98，降低 Denoise 到 0.35"
+    },
+    "背景不够纯白": {
+      "solution": "调整 Prompt 增加 (pure white background:1.3)，后处理用 Levels 工具调整白场"
+    },
+    "鞋子结构变形": {
+      "solution": "提高 Canny 权重到 0.98，确认原图边缘清晰"
+    },
+    "细节丢失": {
+      "solution": "降低 Denoise 到 0.35，增加 Steps 到 35"
+    }
+  }
+}
